@@ -1,9 +1,16 @@
+var $ = require('jquery'),
+  expect = require('expect.js'),
+  sinon = require('sinon'),
+  Tree = require('../index'),
+  TreeMenu = Tree.TreeMenu;
 
-BUI.use('bui/tree/treemenu',function (TreeMenu) {
+describe('tree menu',function () {
+
+    $('<div class="row"><div class="span8" id="ts1"></div><div class="span8" id="ts2"></div></div>').prependTo('body');
 
   describe('生成默认菜单',function(){
     var menu = new TreeMenu({
-      render : '#t1',
+      render : '#ts1',
       elCls : 'test-menu',
       nodes : [
         {text : '1',id : '1',leaf : false,children: []},
@@ -18,39 +25,39 @@ BUI.use('bui/tree/treemenu',function (TreeMenu) {
     menu.render();
     it('初始化',function(){
       expect('生成菜单项',function(){
-        expect(menu.getItems().length).not.toBe(0);
+        expect(menu.getItems().length).not.to.be(0);
       });
     });
 
     it('选中',function(){
       var node = menu.findNode('22');
       menu.setSelected(node);
-      expect(node.selected).toBe(true);
+      expect(node.selected).to.be(true);
       
       var node1 = menu.findNode('21');
       menu.setSelected(node1);
-      expect(node1.selected).not.toBe(true);
-      expect(node.selected).toBe(true);
+      expect(node1.selected).not.to.be(true);
+      expect(node.selected).to.be(true);
       /**/
     });
 
     it('折叠',function(){
       menu.collapseNode('2');
       var node = menu.findNode('22');
-      expect(node.selected).toBe(true);
+      expect(node.selected).to.be(true);
     });
 
     it('展开',function(){
       menu.expandNode('2');
       var node = menu.findNode('22');
-      expect(node.selected).toBe(true);
+      expect(node.selected).to.be(true);
     });
 
   });
 
   describe('自定义样式',function(){
      var menu = new TreeMenu({
-      render : '#t2',
+      render : '#ts2',
       elCls : 'bui-side-menu',
       itemCls : 'bui-menu-item',
       expandAnimate : true,
@@ -79,17 +86,17 @@ BUI.use('bui/tree/treemenu',function (TreeMenu) {
 
     describe('初始化',function(){
       it('选项生成',function(){
-        expect(menu.getItems().length).not.toBe(0);
+        expect(menu.getItems().length).not.to.be(0);
       });
       it('测试非叶子节点DOM',function(){
         var node = menu.findNode('1'),
           element = menu.findElement(node);
-        expect($(element).hasClass('menu-second')).toBe(true);
+        expect($(element).hasClass('menu-second')).to.be(true);
       });
       it('测试叶子节点',function(){
         var node = menu.findNode('loader'),
           element = menu.findElement(node);
-        expect($(element).hasClass('menu-leaf')).toBe(true);
+        expect($(element).hasClass('menu-leaf')).to.be(true);
       });
     });
   });

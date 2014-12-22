@@ -1,4 +1,13 @@
-BUI.use('bui/tree/treelist',function (TreeList) {
+var $ = require('jquery'),
+  expect = require('expect.js'),
+  sinon = require('sinon'),
+  Tree = require('../index'),
+  TreeList = Tree.TreeList;
+
+
+describe('替换icon',function () {
+  $('<div class="row"><div class="span8" id="t6"></div></div>').prependTo('body');
+
   var data = [
       {text : '1',id : '1',leaf : false,children: []},
       {text : '2',id : '2',expanded : true,children : [
@@ -25,21 +34,21 @@ BUI.use('bui/tree/treelist',function (TreeList) {
     it('整体更换icon',function(){
       var node = tree.findNode('1'),
         element = tree.findElement(node);
-      expect($(element).find('.icon-pkg').length).toBe(1);
+      expect($(element).find('.icon-pkg').length).to.be(1);
 
       var node = tree.findNode('3'),
         element = tree.findElement(node);
-      expect($(element).find('.icon-example').length).toBe(1);
+      expect($(element).find('.icon-example').length).to.be(1);
     });
     it('自定义icon',function(){
        var node = tree.findNode('21'),
         element = tree.findElement(node);
-      expect($(element).find('.icon-pkg').length).toBe(0);
-      expect($(element).find('.task-folder').length).toBe(1);
+      expect($(element).find('.icon-pkg').length).to.be(0);
+      expect($(element).find('.task-folder').length).to.be(1);
       var node = tree.findNode('22'),
         element = tree.findElement(node);
-      expect($(element).find('.icon-example').length).toBe(0);
-      expect($(element).find('.task').length).toBe(1);
+      expect($(element).find('.icon-example').length).to.be(0);
+      expect($(element).find('.task').length).to.be(1);
     });
   });
   describe('操作数据',function(){
@@ -49,12 +58,12 @@ BUI.use('bui/tree/treelist',function (TreeList) {
       var node = store.findNode('1'),
         subNode = store.add({id : '11',text : '11'},node),
         element = tree.findElement(subNode);
-      expect($(element).find('.icon-example').length).toBe(1);
+      expect($(element).find('.icon-example').length).to.be(1);
 
       subNode = store.add({id : '12',text : '12',cls : 'task'},node);
       element = tree.findElement(subNode);
-      expect($(element).find('.icon-example').length).toBe(0);
-      expect($(element).find('.task').length).toBe(1);
+      expect($(element).find('.icon-example').length).to.be(0);
+      expect($(element).find('.task').length).to.be(1);
 
     });
     it('更新数据',function(){
@@ -63,8 +72,8 @@ BUI.use('bui/tree/treelist',function (TreeList) {
       store.update(node);
 
       var element = tree.findElement(node);
-      expect($(element).find('.icon-example').length).toBe(0);
-      expect($(element).find('.task').length).toBe(1);
+      expect($(element).find('.icon-example').length).to.be(0);
+      expect($(element).find('.task').length).to.be(1);
 
     });
   });

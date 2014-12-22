@@ -1,5 +1,17 @@
 /**/
-BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
+
+var $ = require('jquery'),
+  expect = require('expect.js'),
+  sinon = require('sinon'),
+  Tree = require('../index'),
+  TreeList = Tree.TreeList;
+
+var Data = require('bui-data');
+
+
+$('<div class="row"><div class="span8" id="t4"></div><div class="span8" id="t7"></div></div>').prependTo('body');
+
+describe('使用 store',function () {
   var nodes = [
         {text : '1',id : '1',leaf : false},
         {text : '2',id : '2',children : [
@@ -28,16 +40,16 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
   describe('测试初始化',function(){
     it('显示数据',function(){
       if(showRoot){
-        expect(el.find('li').length).toBe(1);
+        expect(el.find('li').length).to.be(1);
       }else{
-        expect(el.find('li').length).toBe(nodes.length);
+        expect(el.find('li').length).to.be(nodes.length);
       }
       
     });
     it('显示所有',function(){
       tree.expandAll();
       var node = tree.getItem('212');
-      expect(node).not.toBe(null);
+      expect(node).not.to.be(null);
     });
   });
 
@@ -47,45 +59,46 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
       
     });
 
-     it('在叶子节点上添加节点',function(){
+     it('在叶子节点上添加节点',function(done){
         var node = tree.getItem('3'),
           subNode = {id:'31',text : '31'},
           element = tree.findElement(node);
-        expect($(element).find('.x-tree-elbow-dir').length).toBe(0);
+        expect($(element).find('.x-tree-elbow-dir').length).to.be(0);
         store.add(subNode,node,0);
-        waits(100);
-        runs(function(){
-          expect($(element).find('.x-tree-elbow-dir').length).toBe(1);
-        });
+        setTimeout(function(){
+          expect($(element).find('.x-tree-elbow-dir').length).to.be(1);
+          done();
+        },100);
       });
 
-      it('展开的节点上，添加节点到最后',function(){
+      it('展开的节点上，添加节点到最后',function(done){
         var node = tree.getItem('21'),
           sblingNode = tree.getItem('212'), //添加之前最后一个节点
           sblingElement = tree.findElement(sblingNode),
           subNode = {id : '213',text: '213'};
 
-        expect($(sblingElement).find('.x-tree-elbow-end').length).toBe(1);
+        expect($(sblingElement).find('.x-tree-elbow-end').length).to.be(1);
         subNode = store.add(subNode,node);
 
-        waits(100);
-        runs(function(){
+        setTimeout(function(){
           var subElement = tree.findElement(subNode);
-          expect($(sblingElement).find('.x-tree-elbow-end').length).toBe(0);
-          expect($(subElement).find('.x-tree-elbow-end').length).toBe(1);
-        });
+          expect($(sblingElement).find('.x-tree-elbow-end').length).to.be(0);
+          expect($(subElement).find('.x-tree-elbow-end').length).to.be(1);
+          done();
+        },100);
+
       });
 
-      it('添加节点到第一个',function(){
+      it('添加节点到第一个',function(done){
         var node = tree.getItem('21'),
           subNode = {id : '210',text: '210'};
 
         subNode = store.add(subNode,node,0);
-        waits(100);
-        runs(function(){
+        setTimeout(function(){
           var subElement = tree.findElement(subNode);
           
-          expect($(subElement).find('.x-tree-elbow-end').length).toBe(0);
+          expect($(subElement).find('.x-tree-elbow-end').length).to.be(0);
+          done();
         });
 
       });
@@ -93,9 +106,9 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
         var node = tree.getItem('1'),
           subNode = {id : '11',text:'11',children : [{id : '111',text : '111'},{id:'112',text : '112'}]};
         store.add(subNode,node);
-         expect(tree.getItem('112')).toBe(null);
+         expect(tree.getItem('112')).to.be(null);
         tree.expandNode(node,true);
-        expect(tree.getItem('112')).not.toBe(null);
+        expect(tree.getItem('112')).not.to.be(null);
       });
 
       it('测试添加最后',function(){
@@ -104,36 +117,36 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
         store.add({id : '41',text:'41'},node);
         store.add({id : '42',text:'42'},node);
         tree.expandNode(node);
-        expect($(element).find('.x-tree-elbow-dir').length).toBe(1);
-        expect($(element).find('.x-tree-elbow-expander').length).toBe(1);
-        expect($(element).find('.x-tree-elbow-expander-end').length).toBe(1);
-        expect(tree.getItem('41')).not.toBe(null);
+        expect($(element).find('.x-tree-elbow-dir').length).to.be(1);
+        expect($(element).find('.x-tree-elbow-expander').length).to.be(1);
+        expect($(element).find('.x-tree-elbow-expander-end').length).to.be(1);
+        expect(tree.getItem('41')).not.to.be(null);
         var node = store.add({id : '5',text:'5',leaf : true},null,4),
           element = tree.findElement(node);
-        expect(element).not.toBe(null);
-        expect($(element).next('li').length).toBe(0);
+        expect(element).not.to.be(null);
+        expect($(element).next('li').length).to.be(0);
       });
      
       it('删除非最后一个节点',function(){
         var node = tree.getItem('210');
         store.remove(node);
-        expect(tree.getItem('210')).toBe(null);
+        expect(tree.getItem('210')).to.be(null);
       });
       it('删除最后一个节点',function(){
         var node = tree.getItem('213');
         store.remove(node);
-        expect(tree.getItem('213')).toBe(null);
+        expect(tree.getItem('213')).to.be(null);
         var node = tree.getItem('212'),
           element = tree.findElement(node);
-        expect($(element).find('.x-tree-elbow-end').length).toBe(1);
+        expect($(element).find('.x-tree-elbow-end').length).to.be(1);
       });
       it('删除仅有一个子节点',function(){ 
         var node = tree.getItem('3'),
           element = tree.findElement(node);
 
         store.remove(node.children[0]);
-        expect(node.leaf).toBe(true);
-        expect($(element).find('.x-tree-elbow-dir').length).toBe(0);
+        expect(node.leaf).to.be(true);
+        expect($(element).find('.x-tree-elbow-dir').length).to.be(0);
       });
 
       it('更改节点',function(){
@@ -142,7 +155,8 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
   });
 });
 
-BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
+/*
+describe('异步',function () {
   var store = new Data.TreeStore({
       root : {
         id : '0',
@@ -165,7 +179,7 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
       store.load({id : '0'});
       waits(1500);
       runs(function(){
-        expect(el.find('li')).not.toBe(0);
+        expect(el.find('li')).not.to.be(0);
       });
     });
 
@@ -173,12 +187,12 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
       var node = store.findNode('1'),
         element = tree.findElement(node);
       tree.expandNode(node);
-      expect($(element).hasClass('bui-tree-item-loading')).toBe(true);
-      expect(tree.getItem('11')).toBe(null);
+      expect($(element).hasClass('bui-tree-item-loading')).to.be(true);
+      expect(tree.getItem('11')).to.be(null);
       waits(1500);
       runs(function(){
-        expect($(element).hasClass('bui-tree-item-loading')).toBe(false);
-        expect(tree.getItem('11')).not.toBe(null);
+        expect($(element).hasClass('bui-tree-item-loading')).to.be(false);
+        expect(tree.getItem('11')).not.to.be(null);
       });
     });
 
@@ -186,9 +200,9 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
       var node = store.findNode('1'),
         element = tree.findElement(node);
       tree.collapseNode(node);
-      expect(tree.getItem('11')).toBe(null);
+      expect(tree.getItem('11')).to.be(null);
       tree.expandNode(store.findNode('11'));
-      expect(tree.getItem('11')).not.toBe(null);
+      expect(tree.getItem('11')).not.to.be(null);
     });
 
     it('展开多个节点',function(){
@@ -196,8 +210,8 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
       tree.expandNode('15');
       waits(1500);
       runs(function(){
-        expect(tree.getItem('131')).not.toBe(null);
-        expect(tree.getItem('151')).not.toBe(null);
+        expect(tree.getItem('131')).not.to.be(null);
+        expect(tree.getItem('151')).not.to.be(null);
       });
     });
 
@@ -206,38 +220,38 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
       tree.expandPath(path,true);
       waits(4000);
       runs(function(){
-        expect(tree.getItem('3131')).not.toBe(null);
+        expect(tree.getItem('3131')).not.to.be(null);
       });
     });
 
     it('重新加载节点',function(){
       var node = store.findNode('11'),
         element = tree.findElement(node);
-      expect(element).not.toBe(null);
+      expect(element).not.to.be(null);
 
       tree.expandNode(node);
       waits(1500);
       runs(function(){
-        expect(node.loaded).toBe(true);
+        expect(node.loaded).to.be(true);
 
         store.reloadNode(node);
-        expect(node.loaded).toBe(false);
+        expect(node.loaded).to.be(false);
 
-        expect($(element).hasClass('bui-tree-item-loading')).toBe(true);
+        expect($(element).hasClass('bui-tree-item-loading')).to.be(true);
         waits(1500);
         runs(function(){
-          expect($(element).hasClass('bui-tree-item-loading')).toBe(false);
-          expect(node.loaded).toBe(true);
-          expect(store.isLoaded(node)).toBe(true);
+          expect($(element).hasClass('bui-tree-item-loading')).to.be(false);
+          expect(node.loaded).to.be(true);
+          expect(store.isLoaded(node)).to.be(true);
         });
       });
     });
   });
 
 });
+*/
 
-
-BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
+describe('线性数据',function () {
   var data = [
       {pid : '1',id : '11',text : '11',leaf : false},
       {pid : '1',id : '12',text : '12'},
@@ -270,13 +284,13 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
 
   describe('测试缓存级联数据',function(){
     it('初始化',function(){
-      expect(store.get('root').children.length).toBe(3);
+      expect(store.get('root').children.length).to.be(3);
     });
     it('展开节点',function(){
       var node = store.findNode('13');
-      expect(node.children.length).toBe(0);
+      expect(node.children.length).to.be(0);
       tree.expandNode(node);
-      expect(node.children.length).not.toBe(0);
+      expect(node.children.length).not.to.be(0);
     });
   });
 

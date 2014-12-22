@@ -1,5 +1,5 @@
-BUI.use('bui/extensions/treepicker',function (TreePicker) {
-/**/  
+/*BUI.use('bui/extensions/treepicker',function (TreePicker) {
+
 
   describe('测试单选',function(){
     var picker = new TreePicker({
@@ -81,7 +81,7 @@ BUI.use('bui/extensions/treepicker',function (TreePicker) {
       expect($('#J_V2').val()).toBe('');
       picker.get('tree').setChecked('2');
       expect($('#J_V2').val()).not.toBe('2');
-    }); /**/
+    }); 
   });
 
-});
+});*/  
